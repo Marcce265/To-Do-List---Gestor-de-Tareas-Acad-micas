@@ -52,17 +52,9 @@ pip install -r requirements.txt
 python main.py
 ```
 
-### Ejecución con Datos de Prueba
-```bash
-# Poblar BD con datos de ejemplo
-python scripts/seed_db.py
-
-# Ejecutar aplicación
-python main.py
-```
-
 ## 🧪 Ejecución de Pruebas
 
-# Ejecutar pruebas unitarias
+### Ejecutar pruebas unitarias
+```bash
 python -m unittest discover src/tests
-
+```
