@@ -1,6 +1,7 @@
 from src.modelo.declarative_base import Session
 from src.modelo.modelo import EstadoTarea, Perfil, Materia, Tarea, Prioridad
 
+
 class TaskManager:
     """
     Clase que contiene la lógica de negocio para la gestión de perfiles,
@@ -47,7 +48,7 @@ class TaskManager:
         perfil = session.query(Perfil).filter_by(nombre=nombre).first()
         session.close()
         return perfil
-     
+
     def crear_materia(self, perfil_id: int, nombre: str, color: str = "Azul") -> Materia:
         if not nombre or not nombre.strip():
             raise ValueError("El nombre de la materia es obligatorio")
@@ -71,6 +72,7 @@ class TaskManager:
         session.close()
 
         return materia
+
     def listar_materias_por_perfil(self, perfil_id: int):
         if perfil_id <= 0:
             raise ValueError("ID de perfil inválido")
@@ -99,7 +101,8 @@ class TaskManager:
         session = Session()
         try:
             # 2️⃣ Validar existencia de materia
-            materia = session.query(Materia).filter_by(idMateria=materia_id).first()
+            materia = session.query(Materia).filter_by(
+                idMateria=materia_id).first()
             if not materia:
                 raise ValueError("Materia no existe")
 
@@ -120,32 +123,38 @@ class TaskManager:
 
         finally:
             session.close()
-    
-    def marcar_tarea_completada(self, tarea_id: int) -> Tarea:
 
-    # Validación básica del ID
+    def _obtener_tarea(self, session, tarea_id: int) -> Tarea:
+        """
+        Obtiene una tarea por ID validando su existencia.
+        """
+
         if tarea_id <= 0:
             raise ValueError("ID de tarea inválido")
 
+        tarea = session.query(Tarea).filter_by(idTarea=tarea_id).first()
+
+        if not tarea:
+            raise ValueError("Tarea no existe")
+
+        return tarea
+
+    def marcar_tarea_completada(self, tarea_id: int) -> Tarea:
+        """
+        Marca una tarea existente como completada.
+        """
+
         session = Session()
         try:
-            # Buscar la tarea
-            tarea = session.query(Tarea).filter_by(idTarea=tarea_id).first()
+            tarea = self._obtener_tarea(session, tarea_id)
 
-            if not tarea:
-                raise ValueError("Tarea no existe")
-
-            # Cambiar el estado a Completada
-            # No permitir marcar una tarea ya completada
             if tarea.estado == EstadoTarea.Completada:
                 raise ValueError("La tarea ya está completada")
 
-            # Cambiar el estado a Completada
             tarea.estado = EstadoTarea.Completada
 
             session.commit()
             session.refresh(tarea)
-
             return tarea
 
         finally:
@@ -156,33 +165,39 @@ class TaskManager:
         Devuelve una tarea completada al estado Pendiente.
         """
 
-        # Validación básica del ID
-        if tarea_id <= 0:
-            raise ValueError("ID de tarea inválido")
-
         session = Session()
         try:
-            # Buscar la tarea
-            tarea = session.query(Tarea).filter_by(idTarea=tarea_id).first()
+            tarea = self._obtener_tarea(session, tarea_id)
 
-            if not tarea:
-                raise ValueError("Tarea no existe")
-
-            # Cambiar el estado a Pendiente
             tarea.estado = EstadoTarea.Pendiente
 
             session.commit()
             session.refresh(tarea)
-
             return tarea
 
         finally:
             session.close()
 
+    def listar_tareas_por_materia(self, materia_id: int):
+        """
+        Devuelve todas las tareas asociadas a una materia.
+        """
 
+        if materia_id <= 0:
+            raise ValueError("ID de materia inválido")
 
-    
+        session = Session()
+        try:
+            materia = session.query(Materia).filter_by(
+                idMateria=materia_id).first()
 
-    
+            if not materia:
+                raise ValueError("Materia no existe")
 
+            # Forzamos la carga de las tareas DENTRO de la sesión
+            tareas = list(materia.tareas)
 
+            return tareas
+
+        finally:
+            session.close()

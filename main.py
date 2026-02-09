@@ -1,3 +1,5 @@
+import src.modelo.modelo  # carga los modelos
+from src.logica.task_manager import TaskManager
 from src.modelo.declarative_base import engine, Base
 from datetime import datetime
 from src.modelo.modelo import Prioridad
@@ -9,10 +11,6 @@ import src.modelo.modelo
 Base.metadata.create_all(engine)
 
 print("Base de datos creada correctamente")
-
-from src.logica.task_manager import TaskManager
-from src.modelo.declarative_base import engine, Base
-import src.modelo.modelo  # carga los modelos
 
 
 def inicializar_bd():
@@ -35,13 +33,16 @@ def mostrar_menu():
     print("2. Seleccionar Usuario 2")
     print("0. Salir")
 
+
 def mostrar_menu_perfil(nombre_perfil):
     print(f"\n=== MENÚ DE {nombre_perfil.upper()} ===")
     print("1. Crear materia")
     print("2. Listar materias")
     print("3. Crear tarea")
+    print("4. Listar tareas")
+    print("5. Marcar tarea como completada")
+    print("6. Desmarcar tarea")
     print("0. Volver")
-
 
 
 def main():
@@ -49,8 +50,10 @@ def main():
     tm = TaskManager()
 
     # Crear perfiles por defecto
-    perfil1 = tm.seleccionar_perfil_por_nombre("Usuario 1") or tm.crear_perfil("Usuario 1")
-    perfil2 = tm.seleccionar_perfil_por_nombre("Usuario 2") or tm.crear_perfil("Usuario 2")
+    perfil1 = tm.seleccionar_perfil_por_nombre(
+        "Usuario 1") or tm.crear_perfil("Usuario 1")
+    perfil2 = tm.seleccionar_perfil_por_nombre(
+        "Usuario 2") or tm.crear_perfil("Usuario 2")
 
     perfiles = {
         "1": perfil1,
@@ -89,7 +92,8 @@ def main():
 
             elif opcion_perfil == "2":
                 try:
-                    materias = tm.listar_materias_por_perfil(perfil_activo.idPerfil)
+                    materias = tm.listar_materias_por_perfil(
+                        perfil_activo.idPerfil)
 
                     if not materias:
                         print("No hay materias registradas")
@@ -101,7 +105,8 @@ def main():
                     print(f"Error: {e}")
             elif opcion_perfil == "3":
                 try:
-                    materias = tm.listar_materias_por_perfil(perfil_activo.idPerfil)
+                    materias = tm.listar_materias_por_perfil(
+                        perfil_activo.idPerfil)
 
                     if not materias:
                         print("No hay materias. Cree una primero.")
@@ -134,7 +139,8 @@ def main():
 
                     prioridad = prioridades[opcion_prioridad]
 
-                    fecha_str = input("Fecha de entrega (YYYY-MM-DD) o vacío: ")
+                    fecha_str = input(
+                        "Fecha de entrega (YYYY-MM-DD) o vacío: ")
                     fecha = None
                     if fecha_str.strip():
                         fecha = datetime.strptime(fecha_str, "%Y-%m-%d").date()
@@ -154,10 +160,52 @@ def main():
                 except Exception:
                     print("Formato de fecha inválido (use YYYY-MM-DD)")
 
+            elif opcion_perfil == "4":
+                try:
+                    materias = tm.listar_materias_por_perfil(
+                        perfil_activo.idPerfil)
+
+                    if not materias:
+                        print("No hay materias")
+                        continue
+
+                    for m in materias:
+                        print(f"\nMateria: {m.nombre}")
+
+                        tareas = tm.listar_tareas_por_materia(m.idMateria)
+
+                        if not tareas:
+                            print("  (Sin tareas)")
+                        else:
+                            for t in tareas:
+                                print(
+                                    f"  [{t.idTarea}] {t.titulo} - {t.estado.name}"
+                                )
+
+                except ValueError as e:
+                    print(f"Error: {e}")
+
+            elif opcion_perfil == "5":
+                try:
+                    tarea_id = int(input("ID de la tarea a completar: "))
+                    tm.marcar_tarea_completada(tarea_id)
+                    print("✅ Tarea marcada como completada")
+
+                except ValueError as e:
+                    print(f"Error: {e}")
+
+            elif opcion_perfil == "6":
+                try:
+                    tarea_id = int(input("ID de la tarea a desmarcar: "))
+                    tm.desmarcar_tarea(tarea_id)
+                    print("↩️ Tarea devuelta a pendiente")
+
+                except ValueError as e:
+                    print(f"Error: {e}")
+
             else:
                 print("Opción inválida")
 
 
 if __name__ == "__main__":
     main()
-
