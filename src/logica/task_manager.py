@@ -88,8 +88,11 @@ class TaskManager:
         return materias
 
     def crear_tarea(self, titulo, descripcion, materia_id, prioridad, fecha):
-        session = Session()
+        
+        if not titulo or not titulo.strip():
+            raise ValueError("El título de la tarea es obligatorio")
 
+        session = Session()
         tarea = Tarea(
             titulo=titulo,
             descripcion=descripcion,
