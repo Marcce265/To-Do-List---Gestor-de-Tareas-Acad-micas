@@ -136,6 +136,11 @@ class TaskManager:
                 raise ValueError("Tarea no existe")
 
             # Cambiar el estado a Completada
+            # No permitir marcar una tarea ya completada
+            if tarea.estado == EstadoTarea.Completada:
+                raise ValueError("La tarea ya está completada")
+
+            # Cambiar el estado a Completada
             tarea.estado = EstadoTarea.Completada
 
             session.commit()
@@ -174,7 +179,7 @@ class TaskManager:
         finally:
             session.close()
 
-    
+
 
     
 
