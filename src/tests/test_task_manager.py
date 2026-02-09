@@ -1,6 +1,8 @@
+from datetime import date
 import unittest
 from src.logica.task_manager import TaskManager
-from src.modelo.declarative_base import Base, engine
+from src.modelo.declarative_base import Base, Session, engine
+from src.modelo.modelo import Materia, Prioridad
 
 
 class TestTaskManager(unittest.TestCase):

@@ -1,5 +1,6 @@
 from src.modelo.declarative_base import Session
-from src.modelo.modelo import Perfil, Materia
+from src.modelo.modelo import EstadoTarea, Perfil, Materia, Tarea
+
 class TaskManager:
     """
     Clase que contiene la lógica de negocio para la gestión de perfiles,
@@ -85,5 +86,21 @@ class TaskManager:
         session.close()
 
         return materias
-    
-    
+
+    def crear_tarea(self, titulo, descripcion, materia_id, prioridad, fecha):
+        session = Session()
+
+        tarea = Tarea(
+            titulo=titulo,
+            descripcion=descripcion,
+            materia_id=materia_id,
+            prioridad=prioridad,
+            fechaEntrega=fecha,
+            estado=EstadoTarea.Pendiente
+        )
+
+        session.add(tarea)
+        session.commit()
+        session.refresh(tarea)
+        session.close()
+        return tarea
