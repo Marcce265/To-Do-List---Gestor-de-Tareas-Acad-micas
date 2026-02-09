@@ -1,5 +1,5 @@
 from src.modelo.declarative_base import Session
-from src.modelo.modelo import Perfil
+from src.modelo.modelo import Perfil,Materia 
 
 
 class TaskManager:
@@ -42,3 +42,12 @@ class TaskManager:
         perfil = session.query(Perfil).filter_by(idPerfil=id_perfil).first()
         session.close()
         return perfil
+    def crear_materia(self, nombre: str, descripcion: str) -> bool:
+        session = Session()
+        # Creamos la materia con un color por defecto ("#FFFFFF") 
+        # porque el modelo dice que no puede ser nulo.
+        nueva_materia = Materia(nombre=nombre, color="#FFFFFF") 
+        session.add(nueva_materia)
+        session.commit()
+        session.close()
+        return True
