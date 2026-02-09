@@ -72,3 +72,13 @@ class TestTaskManager(unittest.TestCase):
         )
 
         self.assertEqual(tarea.titulo, "Estudiar para el examen")
+
+    def test_hu003_crear_tarea_titulo_vacio(self):
+        with self.assertRaises(ValueError):
+            self.tm.crear_tarea(
+                titulo="",
+                descripcion="Algo",
+                materia_id=1,
+                prioridad=Prioridad.Media,
+                fecha=None
+            )
