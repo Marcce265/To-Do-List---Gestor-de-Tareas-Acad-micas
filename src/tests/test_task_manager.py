@@ -198,3 +198,31 @@ class TestTaskManager(unittest.TestCase):
         )
 
         self.assertEqual(tarea_editada.descripcion, "Nueva")
+
+    def test_hu005_rojo_mantener_campos_no_editados(self):
+        """
+        TEST ROJO A PROPÓSITO:
+        Este test espera un comportamiento INCORRECTO,
+        por lo tanto DEBE FALLAR.
+        """
+
+        perfil = self.tm.crear_perfil("Usuario Test")
+        materia = self.tm.crear_materia(perfil.idPerfil, "Arte")
+
+        tarea = self.tm.crear_tarea(
+            titulo="Titulo original",
+            descripcion="Descripcion original",
+            materia_id=materia.idMateria,
+            prioridad=Prioridad.Alta,
+            fecha=None
+        )
+
+        # Editamos SOLO el título
+        tarea_editada = self.tm.editar_tarea(
+            tarea_id=tarea.idTarea,
+            nuevo_titulo="Titulo nuevo"
+        )
+
+        # La descripción NO debería cambiar,
+        # pero aquí decimos que sí cambia
+        self.assertEqual(tarea_editada.descripcion, "Descripcion cambiada")
