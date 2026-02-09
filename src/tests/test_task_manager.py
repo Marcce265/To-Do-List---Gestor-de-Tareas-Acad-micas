@@ -28,4 +28,9 @@ class TestTaskManager(unittest.TestCase):
         # Escenario 1: Datos válidos (Rojo)
         resultado = self.tm.crear_materia(nombre="Matemáticas", descripcion="Cálculo I")
         self.assertTrue(resultado)
+    def test_hu002_escenario2_nombre_obligatorio(self):
+        # Escenario 2: No debe permitir nombres vacíos
+        with self.assertRaises(ValueError):
+            self.tm.crear_materia(nombre="", descripcion="Sin nombre")
+        
 
