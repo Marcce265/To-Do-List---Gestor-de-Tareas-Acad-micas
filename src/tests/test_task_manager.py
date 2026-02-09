@@ -24,6 +24,8 @@ class TestTaskManager(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.tm.seleccionar_perfil(0)
 
-
-    
+    def test_hu002_escenario1_crear_materia_valida(self):
+        # Escenario 1: Datos válidos (Rojo)
+        resultado = self.tm.crear_materia(nombre="Matemáticas", descripcion="Cálculo I")
+        self.assertTrue(resultado)
 
