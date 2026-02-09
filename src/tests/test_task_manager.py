@@ -179,3 +179,22 @@ class TestTaskManager(unittest.TestCase):
         )
 
         self.assertEqual(tarea_editada.titulo, "Titulo nuevo")
+
+    def test_hu005_rojo_editar_descripcion(self):
+        perfil = self.tm.crear_perfil("Usuario Test")
+        materia = self.tm.crear_materia(perfil.idPerfil, "Lengua")
+
+        tarea = self.tm.crear_tarea(
+            titulo="Leer",
+            descripcion="Vieja",
+            materia_id=materia.idMateria,
+            prioridad=Prioridad.Baja,
+            fecha=None
+        )
+
+        tarea_editada = self.tm.editar_tarea(
+            tarea_id=tarea.idTarea,
+            nueva_descripcion="Nueva"
+        )
+
+        self.assertEqual(tarea_editada.descripcion, "Nueva")
