@@ -6,6 +6,7 @@ from src.modelo.declarative_base import Base, engine
 class TestTaskManager(unittest.TestCase):
 
     def setUp(self):
+        Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
         self.tm = TaskManager()
 
@@ -51,3 +52,21 @@ class TestTaskManager(unittest.TestCase):
 
         self.assertEqual(len(materias), 2)    
 
+    def test_hu003_crear_tarea_valida(self):
+        session = Session()
+
+        materia = Materia(nombre="Matemática", color="Azul", perfil_id=1)
+        session.add(materia)
+        session.commit()
+        session.refresh(materia)
+        session.close()
+
+        tarea = self.tm.crear_tarea(
+            titulo="Estudiar para el examen",
+            descripcion="Capítulos 1 al 3",
+            materia_id=materia.idMateria,
+            prioridad=Prioridad.Alta,
+            fecha=date(2026, 2, 20)
+        )
+
+        self.assertEqual(tarea.titulo, "Estudiar para el examen")
