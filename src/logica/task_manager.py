@@ -12,8 +12,12 @@ class TaskManager:
         return perfil
 
     def seleccionar_perfil(self, id_perfil):
+        if id_perfil <= 0:
+            raise ValueError("ID de perfil inválido")
+
         session = Session()
         perfil = session.query(Perfil).filter_by(idPerfil=id_perfil).first()
         session.close()
         return perfil
+
 
