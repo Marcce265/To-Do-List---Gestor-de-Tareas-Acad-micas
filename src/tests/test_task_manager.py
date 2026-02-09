@@ -108,3 +108,30 @@ class TestTaskManager(unittest.TestCase):
         tarea_actualizada = self.tm.marcar_tarea_completada(tarea.idTarea)
 
         self.assertEqual(tarea_actualizada.estado.name, "Completada")
+
+    def test_hu004_desmarcar_tarea(self):
+        """
+        HU004 - Escenario alterno:
+        Verifica que una tarea completada pueda volver a estado Pendiente.
+        """
+
+        # Arrange: crear perfil, materia y tarea
+        perfil = self.tm.crear_perfil("Usuario Test")
+        materia = self.tm.crear_materia(perfil.idPerfil, "Física")
+
+        tarea = self.tm.crear_tarea(
+            titulo="Resolver ejercicios",
+            descripcion="Guía 2",
+            materia_id=materia.idMateria,
+            prioridad=Prioridad.Baja,
+            fecha=None
+        )
+
+        # Marcar primero como completada
+        self.tm.marcar_tarea_completada(tarea.idTarea)
+
+        # Act: desmarcar la tarea (método aún no existe → ROJO)
+        tarea_actualizada = self.tm.desmarcar_tarea(tarea.idTarea)
+
+        # Assert: la tarea vuelve a Pendiente
+        self.assertEqual(tarea_actualizada.estado.name, "Pendiente")
