@@ -135,3 +135,28 @@ class TestTaskManager(unittest.TestCase):
 
         # Assert: la tarea vuelve a Pendiente
         self.assertEqual(tarea_actualizada.estado.name, "Pendiente")
+    
+    def test_hu004_marcar_tarea_ya_completada(self):
+        """
+        HU004 - Escenario rojo:
+        Verifica que no se pueda marcar como completada
+        una tarea que ya está en estado Completada.
+        """
+
+        perfil = self.tm.crear_perfil("Usuario Test")
+        materia = self.tm.crear_materia(perfil.idPerfil, "Química")
+
+        tarea = self.tm.crear_tarea(
+            titulo="Leer apuntes",
+            descripcion="Unidad 1",
+            materia_id=materia.idMateria,
+            prioridad=Prioridad.Media,
+            fecha=None
+        )
+
+        # Marcar una vez (esto es válido)
+        self.tm.marcar_tarea_completada(tarea.idTarea)
+
+        # Intentar marcar otra vez (debería fallar → ROJO)
+        with self.assertRaises(ValueError):
+            self.tm.marcar_tarea_completada(tarea.idTarea)
