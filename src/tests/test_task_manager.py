@@ -82,3 +82,13 @@ class TestTaskManager(unittest.TestCase):
                 prioridad=Prioridad.Media,
                 fecha=None
             )
+
+    def test_hu003_crear_tarea_materia_inexistente(self):
+        with self.assertRaises(ValueError):
+            self.tm.crear_tarea(
+                titulo="Hacer tarea",
+                descripcion="",
+                materia_id=999,
+                prioridad=Prioridad.Baja,
+                fecha=None
+            )
