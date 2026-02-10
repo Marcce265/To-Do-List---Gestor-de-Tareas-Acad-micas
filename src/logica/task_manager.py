@@ -275,8 +275,8 @@ class TaskManager:
 
 
             #  VALIDACIÓN  (HU-006 Escenario 2)
-            #if not nuevo_nombre or not nuevo_nombre.strip():
-                #raise ValueError("El nombre de la materia es obligatorio")
+            if not nuevo_nombre or not nuevo_nombre.strip():
+                raise ValueError("El nombre de la materia es obligatorio")
 
             materia.nombre = nuevo_nombre.strip()
             materia.color = nuevo_color
