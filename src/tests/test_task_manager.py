@@ -226,3 +226,25 @@ class TestTaskManager(unittest.TestCase):
         # La descripción NO debería cambiar,
         # pero aquí decimos que sí cambia
         self.assertEqual(tarea_editada.descripcion, "Descripcion cambiada")
+
+    def test_HU006_editar_materia_datos_validos(self):
+        tm = TaskManager()
+
+        # GIVEN: perfil y materia existente
+        perfil = tm.crear_perfil("Kevin")
+        materia = tm.crear_materia(
+        perfil_id=perfil.idPerfil,
+        nombre="Matemáticas",
+        color="Azul"
+    )
+
+        # WHEN: se edita nombre y color
+        materia_editada = tm.editar_materia(
+        id_materia=materia.idMateria,
+        nuevo_nombre="Álgebra",
+        nuevo_color="Rojo"
+    )
+
+        # THEN: los cambios se reflejan
+        self.assertEqual(materia_editada.nombre, "Álgebra")
+        self.assertEqual(materia_editada.color, "Rojo")
