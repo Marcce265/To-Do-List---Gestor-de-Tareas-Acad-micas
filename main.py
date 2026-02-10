@@ -42,7 +42,8 @@ def mostrar_menu_perfil(nombre_perfil):
     print("4. Listar tareas")
     print("5. Marcar tarea como completada")
     print("6. Desmarcar tarea")
-    print("7. Editar tarea") 
+    print("7. Editar tarea")
+    print("8. Editar materia")  
     print("0. Volver")
 
 
@@ -239,7 +240,47 @@ def main():
                     print("Tarea editada correctamente")
 
                 except ValueError as e:
-                    print(f"Error: {e}")
+                    print(f" Error: {e}")
+
+            elif opcion_perfil == "8":
+                try:
+                    # Mostrar materias disponibles
+                    materias = tm.listar_materias_por_perfil(perfil_activo.idPerfil)
+
+                    if not materias:
+                        print("No hay materias registradas")
+                        continue
+
+                    print("\nMaterias disponibles:")
+                    for m in materias:
+                        print(f"[{m.idMateria}] {m.nombre} - Color: {m.color}")
+
+                    materia_id = int(input("\nIngrese el ID de la materia a editar: "))
+
+                    print("\nDeje vacío el campo que no quiera modificar")
+
+                    nuevo_nombre = input("Nuevo nombre: ")
+                    if not nuevo_nombre.strip():
+                        nuevo_nombre = None
+
+                    nuevo_color = input("Nuevo color: ")
+                    if not nuevo_color.strip():
+                        nuevo_color = None
+
+                    tm.editar_materia(
+                        id_materia=materia_id,
+                        nuevo_nombre=nuevo_nombre,
+                        nuevo_color=nuevo_color
+                    )
+
+                    print("✅ Materia editada correctamente")
+
+                except ValueError as e:
+                    print(f" Error: {e}")
+                except Exception as e:
+                    print(f" Error inesperado: {e}")
+
+                
             else:
                 print("Opción inválida")
 

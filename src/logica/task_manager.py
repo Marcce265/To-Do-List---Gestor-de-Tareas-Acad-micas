@@ -233,60 +233,71 @@ class TaskManager:
 
     def _actualizar_descripcion(self, tarea, nueva_descripcion):
         if nueva_descripcion is None:
-            tarea.descripcion = "Descripcion cambiada"
-            return
+            return  # ✅ CORRECTO: no hacer nada si es None
 
         if not nueva_descripcion.strip():
             return
 
         tarea.descripcion = nueva_descripcion.strip()
 
-    def editar_materia(self, id_materia: int, nuevo_nombre: str, nuevo_color: str):
+    def editar_materia(
+        self, 
+        id_materia: int, 
+        nuevo_nombre: str = None, 
+        nuevo_color: str = None
+    ) -> Materia:
+        """
+        Edita una materia existente.
+        Solo se modifican los campos proporcionados (no None).
+    
+        :param id_materia: ID de la materia a editar
+        :param nuevo_nombre: Nuevo nombre (opcional, validado si se proporciona)
+        :param nuevo_color: Nuevo color (opcional)
+        :return: Materia actualizada
+        :raises ValueError: si la materia no existe o el nombre es inválido
+        """
         session = Session()
         try:
-            materia = session.query(Materia).filter_by(
-            idMateria=id_materia
-            ).first()
-
-            if not materia:
-                raise ValueError("Materia no existe")
-
-            materia.nombre = nuevo_nombre
-            materia.color = nuevo_color
-
+            # Buscar materia
+            materia = self._obtener_materia(session, id_materia)
+        
+            # Actualizar nombre si se proporciona
+            if nuevo_nombre is not None:
+                self._validar_nombre_materia(nuevo_nombre)
+                materia.nombre = nuevo_nombre.strip()
+        
+        # Actualizar color si se proporciona
+            if nuevo_color is not None:
+                materia.color = nuevo_color
+        
             session.commit()
             session.refresh(materia)
             return materia
-
+    
         finally:
             session.close()
+    def _obtener_materia(self, session, id_materia: int) -> Materia:
+        """
+        Obtiene una materia por ID validando su existencia.
+        Método privado reutilizable.
+        """
+        if id_materia <= 0:
+            raise ValueError("ID de materia inválido")
+        
+        materia = session.query(Materia).filter_by(idMateria=id_materia).first()
+        
+        if not materia:
+            raise ValueError("Materia no existe")
+        
+        return materia
 
-    def editar_materia(self, id_materia: int, nuevo_nombre: str, nuevo_color: str):
-        session = Session()
-        try:
-            materia = session.query(Materia).filter_by(
-                idMateria=id_materia
-            ).first()
-
-            if not materia:
-                raise ValueError("Materia no existe")
-            
-
-
-
-            #  VALIDACIÓN  (HU-006 Escenario 2)
-            if not nuevo_nombre or not nuevo_nombre.strip():
-                raise ValueError("El nombre de la materia es obligatorio")
-
-            materia.nombre = nuevo_nombre.strip()
-            materia.color = nuevo_color
-
-            session.commit()
-            session.refresh(materia)
-            return materia
-
-        finally:
-            session.close()
+    def _validar_nombre_materia(self, nombre: str):
+        """
+        Valida que el nombre de una materia no esté vacío.
+        Método privado reutilizable.
+        """
+        if not nombre or not nombre.strip():
+            raise ValueError("El nombre de la materia es obligatorio")
 
     
 
