@@ -267,4 +267,28 @@ class TestTaskManager(unittest.TestCase):
                 nuevo_nombre="   ",
                 nuevo_color="Rojo"
         )
+    
+    def test_hu006_editar_materia_nombre_solo_espacios(self):
+        """
+        HU006 - Escenario 3 ROJO:
+        No se debe permitir editar con nombre que solo contenga espacios.
+        """
+        tm = TaskManager()
+    
+        # GIVEN: perfil y materia existente
+        perfil = tm.crear_perfil("Kevin")
+        materia = tm.crear_materia(
+            perfil_id=perfil.idPerfil,
+            nombre="Historia",
+            color="Verde"
+        )
+
+        # WHEN/THEN: intentar editar con espacios debe fallar
+        with self.assertRaises(ValueError):
+            tm.editar_materia(
+                id_materia=materia.idMateria,
+                nuevo_nombre="   ",
+                nuevo_color="Amarillo"
+        )
+
 
