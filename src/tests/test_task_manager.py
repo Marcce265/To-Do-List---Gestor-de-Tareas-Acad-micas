@@ -1,3 +1,10 @@
+"""
+Módulo de pruebas unitarias para la clase TaskManager.
+
+Se valida la creación, edición, eliminación y cambio de estado
+de perfiles, materias y tareas.
+"""
+
 from datetime import date
 import unittest
 from src.logica.task_manager import TaskManager
@@ -6,46 +13,83 @@ from src.modelo.modelo import Materia, Prioridad
 
 
 class TestTaskManager(unittest.TestCase):
+    """
+    Clase de pruebas unitarias para verificar el comportamiento
+    del gestor de tareas académicas.
 
+    Cada método prueba una historia de usuario específica,
+    incluyendo escenarios verdes (correctos) y rojos (errores).
+    """
     def setUp(self):
+        """
+        Se ejecuta antes de cada prueba.
+        Reinicia la base de datos para garantizar aislamiento.
+        """
         Base.metadata.drop_all(engine)
         Base.metadata.create_all(engine)
         self.tm = TaskManager()
 
     def tearDown(self):
+        """
+        Se ejecuta después de cada prueba.
+        Limpia la base de datos.
+        """
         Base.metadata.drop_all(engine)
 
     def test_hu001_rojo_sin_perfiles(self):
+        """
+        HU001 - Escenario rojo:
+        Verifica que al seleccionar un perfil inexistente
+        el sistema retorne None.
+        """
         perfil = self.tm.seleccionar_perfil(1)
         self.assertIsNone(perfil)
 
     def test_hu001_verde_crear_perfil(self):
+        """
+        HU001 - Escenario verde:
+        Verifica que se pueda crear un perfil correctamente.
+        """
         perfil = self.tm.crear_perfil("Ernesto")
         self.assertIsNotNone(perfil)
     
     def test_hu001_seleccionar_perfil_id_invalido(self):
+        """
+        HU001 - Escenario rojo:
+        Verifica que se lance una excepción al enviar un ID inválido.
+        """
         with self.assertRaises(ValueError):
             self.tm.seleccionar_perfil(0)
 
-  # Verifica que se pueda crear una materia válida asociada a un perfil existente
     def test_hu002_escenario1_crear_materia_valida(self):
-        
+        """
+        HU002 - Escenario verde:
+        Verifica que se pueda crear una materia válida
+        asociada a un perfil existente.
+        """
         perfil = self.tm.crear_perfil("Usuario Test")
         materia = self.tm.crear_materia(perfil.idPerfil, "Matemáticas")
 
         self.assertIsNotNone(materia)
         self.assertEqual(materia.nombre, "Matemáticas")
 
-    # Verifica que no se permita crear una materia con nombre vacío
     def test_hu002_escenario2_nombre_obligatorio(self):
+        """
+        HU002 - Escenario rojo:
+        Verifica que no se permita crear una materia
+        con nombre vacío.
+        """
         perfil = self.tm.crear_perfil("Usuario Test")
 
         with self.assertRaises(ValueError):
             self.tm.crear_materia(perfil.idPerfil, "")
             
-    # Verifica que se puedan listar las materias asociadas a un perfil
     def test_hu002_listar_materias_por_perfil(self):
-        
+        """
+        HU002 - Escenario verde:
+        Verifica que se puedan listar las materias
+        asociadas a un perfil.
+        """
         perfil = self.tm.crear_perfil("Usuario Test")
         self.tm.crear_materia(perfil.idPerfil, "Matemáticas")
         self.tm.crear_materia(perfil.idPerfil, "Física")
@@ -55,6 +99,11 @@ class TestTaskManager(unittest.TestCase):
         self.assertEqual(len(materias), 2)    
 
     def test_hu003_crear_tarea_valida(self):
+        """
+        HU003 - Escenario verde:
+        Verifica que se pueda crear una tarea válida
+        con todos los datos obligatorios.
+        """
         session = Session()
 
         materia = Materia(nombre="Matemática", color="Azul", perfil_id=1)
@@ -74,6 +123,11 @@ class TestTaskManager(unittest.TestCase):
         self.assertEqual(tarea.titulo, "Estudiar para el examen")
 
     def test_hu003_crear_tarea_titulo_vacio(self):
+        """
+        HU003 - Escenario rojo:
+        Verifica que no se permita crear una tarea
+        con título vacío.
+        """
         with self.assertRaises(ValueError):
             self.tm.crear_tarea(
                 titulo="",
@@ -84,6 +138,11 @@ class TestTaskManager(unittest.TestCase):
             )
 
     def test_hu003_crear_tarea_materia_inexistente(self):
+        """
+        HU003 - Escenario rojo:
+        Verifica que no se pueda crear una tarea
+        asociada a una materia inexistente.
+        """
         with self.assertRaises(ValueError):
             self.tm.crear_tarea(
                 titulo="Hacer tarea",
@@ -94,6 +153,11 @@ class TestTaskManager(unittest.TestCase):
             )
 
     def test_hu004_marcar_tarea_completada(self):
+        """
+        HU004 - Escenario verde:
+        Verifica que una tarea pueda marcarse
+        correctamente como Completada.
+        """
         perfil = self.tm.crear_perfil("Usuario Test")
         materia = self.tm.crear_materia(perfil.idPerfil, "Matemática")
 
@@ -162,6 +226,10 @@ class TestTaskManager(unittest.TestCase):
             self.tm.marcar_tarea_completada(tarea.idTarea)
 
     def test_hu005_rojo_editar_titulo(self):
+        """
+        HU005 - Escenario verde:
+        Verifica que se pueda editar el título de una tarea.
+        """
         perfil = self.tm.crear_perfil("Usuario Test")
         materia = self.tm.crear_materia(perfil.idPerfil, "Historia")
 
@@ -181,6 +249,10 @@ class TestTaskManager(unittest.TestCase):
         self.assertEqual(tarea_editada.titulo, "Titulo nuevo")
 
     def test_hu005_rojo_editar_descripcion(self):
+        """
+        HU005 - Escenario verde:
+        Verifica que se pueda editar la descripción de una tarea.
+        """
         perfil = self.tm.crear_perfil("Usuario Test")
         materia = self.tm.crear_materia(perfil.idPerfil, "Lengua")
 
@@ -200,7 +272,11 @@ class TestTaskManager(unittest.TestCase):
         self.assertEqual(tarea_editada.descripcion, "Nueva")
 
     def test_hu005_rojo_mantener_campos_no_editados(self):
-
+        """
+        HU005 - Escenario verde:
+        Verifica que los campos no editados
+        permanezcan sin cambios.
+        """
         perfil = self.tm.crear_perfil("Usuario Test")
         materia = self.tm.crear_materia(perfil.idPerfil, "Arte")
 
@@ -222,6 +298,11 @@ class TestTaskManager(unittest.TestCase):
         self.assertEqual(tarea_editada.descripcion, "Descripcion original")
 
     def test_HU006_editar_materia_datos_validos(self):
+        """
+        HU006 - Escenario verde:
+        Verifica que se pueda editar correctamente
+        el nombre y color de una materia.
+        """
         tm = TaskManager()
 
         # GIVEN: perfil y materia existente
@@ -244,6 +325,11 @@ class TestTaskManager(unittest.TestCase):
         self.assertEqual(materia_editada.color, "Rojo")
 
     def test_HU006_editar_materia_nombre_vacio(self):
+        """
+        HU006 - Escenario rojo:
+        Verifica que no se permita editar una materia
+        con nombre vacío o solo espacios.
+        """
         tm = TaskManager()
 
         # GIVEN: un perfil y una materia existente
