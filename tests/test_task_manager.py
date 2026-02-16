@@ -78,3 +78,15 @@ class TestTaskManager(unittest.TestCase):
         """
         usuario = self.tm.seleccionar_usuario(999)
         self.assertIsNone(usuario)
+
+    def test_hu002_verde_seleccionar_usuario_caso_feliz(self):
+        """
+        HU-002 - Caso verde
+        Seleccionar usuario existente por ID
+        """
+        usuario_creado = self.tm.crear_usuario("Juan", "juan@mail.com")
+        usuario = self.tm.seleccionar_usuario(usuario_creado.idUsuario)
+        
+        self.assertIsNotNone(usuario)
+        self.assertEqual(usuario.nombre, "Juan")
+        self.assertEqual(usuario.correo, "juan@mail.com")
