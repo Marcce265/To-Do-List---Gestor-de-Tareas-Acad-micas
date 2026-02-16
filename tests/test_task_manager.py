@@ -70,3 +70,11 @@ class TestTaskManager(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             self.tm.seleccionar_usuario(-5)
         self.assertIn("id", str(context.exception).lower())
+
+    def test_hu002_rojo_seleccionar_usuario_inexistente(self):
+        """
+        HU-002 - Caso rojo
+        Debe retornar None si el usuario no existe
+        """
+        usuario = self.tm.seleccionar_usuario(999)
+        self.assertIsNone(usuario)

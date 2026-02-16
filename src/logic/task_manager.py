@@ -51,6 +51,7 @@ class TaskManager:
             return usuario
         finally:
             session.close()
+            
     def seleccionar_usuario(self, id_usuario: int) -> Optional[Usuario]:
         """
         HU-002: Selecciona un usuario por ID.
@@ -64,7 +65,7 @@ class TaskManager:
         Raises:
             ValueError: Si el ID es inválido (≤ 0)
         """
-        if id_usuario <= 0:
+        """if id_usuario <= 0:
             raise ValueError("El ID del usuario debe ser mayor a 0")
         
         session = Session()
@@ -74,4 +75,4 @@ class TaskManager:
             ).first()
             return usuario
         finally:
-            session.close()
+            session.close()"""
