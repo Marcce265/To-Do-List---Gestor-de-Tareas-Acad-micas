@@ -113,3 +113,16 @@ class TestTaskManager(unittest.TestCase):
             self.tm.crear_materia(usuario.idUsuario, "", "Azul")
 
         self.assertIn("nombre", str(context.exception).lower())
+    
+    def test_hu003_rojo_crear_materia_color_vacio(self):
+        """
+        HU-003 - Caso rojo
+        No se debe permitir crear materia con color vacío
+        """
+        usuario = self.tm.crear_usuario("Juan", "juan@mail.com")
+
+        with self.assertRaises(ValueError) as context:
+            self.tm.crear_materia(usuario.idUsuario, "Matemáticas", "")
+
+        self.assertIn("color", str(context.exception).lower())
+
