@@ -40,3 +40,15 @@ class TestTaskManager(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             self.tm.crear_usuario("Pedro", "test@mail.com")
         self.assertIn("correo", str(context.exception).lower())
+    
+    def test_hu001_verde_crear_usuario_caso_feliz(self):
+        """
+        HU-001 - Caso verde
+        Crear usuario con datos válidos
+        """
+        usuario = self.tm.crear_usuario("Juan Pérez", "juan@mail.com")
+        
+        self.assertIsNotNone(usuario)
+        self.assertEqual(usuario.nombre, "Juan Pérez")
+        self.assertEqual(usuario.correo, "juan@mail.com")
+        self.assertIsNotNone(usuario.fecha_creacion)
