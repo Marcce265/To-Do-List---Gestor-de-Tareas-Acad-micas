@@ -2,7 +2,8 @@ from datetime import date
 import unittest
 from src.logic.task_manager import TaskManager
 from src.model.declarative_base import Base, engine
-from src.model.modelo import Usuario # Importamos para aserciones
+from src.model.modelo import Usuario  # Importamos para aserciones
+
 
 class TestTaskManager(unittest.TestCase):
 
@@ -29,25 +30,25 @@ class TestTaskManager(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             self.tm.crear_usuario("Test User", "")
         self.assertIn("correo", str(context.exception).lower())
-    
+
     def test_hu001_rojo_crear_usuario_correo_duplicado(self):
         """
         HU-001 - Caso rojo
         No se debe permitir crear usuario con correo ya registrado
         """
         self.tm.crear_usuario("Juan", "test@mail.com")
-        
+
         with self.assertRaises(ValueError) as context:
             self.tm.crear_usuario("Pedro", "test@mail.com")
         self.assertIn("correo", str(context.exception).lower())
-    
+
     def test_hu001_verde_crear_usuario_caso_feliz(self):
         """
         HU-001 - Caso verde
         Crear usuario con datos válidos
         """
         usuario = self.tm.crear_usuario("Juan Pérez", "juan@mail.com")
-        
+
         self.assertIsNotNone(usuario)
         self.assertEqual(usuario.nombre, "Juan Pérez")
         self.assertEqual(usuario.correo, "juan@mail.com")
@@ -86,11 +87,11 @@ class TestTaskManager(unittest.TestCase):
         """
         usuario_creado = self.tm.crear_usuario("Juan", "juan@mail.com")
         usuario = self.tm.seleccionar_usuario(usuario_creado.idUsuario)
-        
+
         self.assertIsNotNone(usuario)
         self.assertEqual(usuario.nombre, "Juan")
         self.assertEqual(usuario.correo, "juan@mail.com")
-    
+
     def test_hu003_rojo_crear_materia_usuario_inexistente(self):
         """
         HU-003 - Caso rojo
@@ -98,5 +99,17 @@ class TestTaskManager(unittest.TestCase):
         """
         with self.assertRaises(ValueError) as context:
             self.tm.crear_materia(999, "Matemáticas", "Azul")
-        
+
         self.assertIn("usuario", str(context.exception).lower())
+
+    def test_hu003_rojo_crear_materia_nombre_vacio(self):
+        """
+        HU-003 - Caso rojo
+        No se debe permitir crear materia con nombre vacío
+        """
+        usuario = self.tm.crear_usuario("Juan", "juan@mail.com")
+
+        with self.assertRaises(ValueError) as context:
+            self.tm.crear_materia(usuario.idUsuario, "", "Azul")
+
+        self.assertIn("nombre", str(context.exception).lower())
