@@ -1,5 +1,5 @@
-from src.modelo.declarative_base import Session
-from src.modelo.modelo import EstadoTarea, Perfil, Materia, Tarea, Prioridad
+from src.model.declarative_base import Session
+from src.model.modelo import EstadoTarea, Perfil, Materia, Tarea, Prioridad
 
 
 class TaskManager:

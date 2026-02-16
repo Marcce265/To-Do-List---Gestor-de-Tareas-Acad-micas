@@ -7,9 +7,9 @@ de perfiles, materias y tareas.
 
 from datetime import date
 import unittest
-from src.logica.task_manager import TaskManager
-from src.modelo.declarative_base import Base, Session, engine
-from src.modelo.modelo import Materia, Prioridad
+from src.logic.task_manager import TaskManager
+from src.model.declarative_base import Base, Session, engine
+from src.model.modelo import Materia, Prioridad
 
 
 class TestTaskManager(unittest.TestCase):
