@@ -108,6 +108,8 @@ class TaskManager:
             if not nombre or not nombre.strip():
                 raise ValueError(
                     "El nombre de la materia no puede estar vacío")
+            if not color or not color.strip():
+                raise ValueError("El color de la materia no puede estar vacío")
             materia = Materia(
                 nombre=nombre.strip(),
                 color=color.strip(),
