@@ -9,33 +9,44 @@ Session = sessionmaker(bind=engine)
 class TaskManager:
 
     def crear_usuario(self, nombre: str, correo: str) -> Usuario:
-        """HU-001: Crea un nuevo usuario (Versión Refactorizada)"""
+        """
+        HU-001: Crea un nuevo usuario.
         
-        # 1. Limpieza y validación temprana (fail-fast)
-        nombre_clean = nombre.strip() if nombre else ""
-        correo_clean = correo.strip() if correo else ""
-
-        if not nombre_clean:
+        Args:
+            nombre: Nombre del usuario (obligatorio)
+            correo: Correo del usuario (obligatorio y único)
+        
+        Returns:
+            Usuario creado y persistido
+        
+        Raises:
+            ValueError: Si nombre o correo están vacíos, o correo duplicado
+        """
+        if not nombre or not nombre.strip():
             raise ValueError("El nombre no puede estar vacío")
-        if not correo_clean:
+        
+        if not correo or not correo.strip():
             raise ValueError("El correo no puede estar vacío")
-
+        
         session = Session()
         try:
-            # 2. Verificación de existencia
-            if session.query(Usuario).filter_by(correo=correo_clean).first():
-                raise ValueError(f"El correo {correo_clean} ya está registrado")
-
-            # 3. Persistencia limpia
-            nuevo_usuario = Usuario(
-                nombre=nombre_clean,
-                correo=correo_clean
-                # La fecha se genera sola en el modelo ahora
+            # Validar correo único
+            usuario_existente = session.query(Usuario).filter_by(
+                correo=correo.strip()
+            ).first()
+            
+            if usuario_existente:
+                raise ValueError(f"El correo {correo} ya está registrado")
+            
+            usuario = Usuario(
+                nombre=nombre.strip(),
+                correo=correo.strip(),
+                fecha_creacion=date.today()
             )
             
-            session.add(nuevo_usuario)
+            session.add(usuario)
             session.commit()
-            session.refresh(nuevo_usuario)
-            return nuevo_usuario
+            session.refresh(usuario)
+            return usuario
         finally:
             session.close()
