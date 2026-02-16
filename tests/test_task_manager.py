@@ -61,3 +61,12 @@ class TestTaskManager(unittest.TestCase):
         with self.assertRaises(ValueError) as context:
             self.tm.seleccionar_usuario(0)
         self.assertIn("id", str(context.exception).lower())
+
+    def test_hu002_rojo_seleccionar_usuario_id_negativo(self):
+        """
+        HU-002 - Caso rojo
+        No se debe permitir ID negativo
+        """
+        with self.assertRaises(ValueError) as context:
+            self.tm.seleccionar_usuario(-5)
+        self.assertIn("id", str(context.exception).lower())
