@@ -113,7 +113,7 @@ class TestTaskManager(unittest.TestCase):
             self.tm.crear_materia(usuario.idUsuario, "", "Azul")
 
         self.assertIn("nombre", str(context.exception).lower())
-    
+
     def test_hu003_rojo_crear_materia_color_vacio(self):
         """
         HU-003 - Caso rojo
@@ -126,3 +126,20 @@ class TestTaskManager(unittest.TestCase):
 
         self.assertIn("color", str(context.exception).lower())
 
+    def test_hu003_rojo_crear_materia_caso_feliz(self):
+        """
+        HU-003 - Caso rojo
+        Crear una materia válida asociada a un usuario
+        """
+        usuario = self.tm.crear_usuario("Juan", "juan@mail.com")
+
+        materia = self.tm.crear_materia(
+            usuario.idUsuario,
+            "Matemáticas",
+            "Azul"
+        )
+
+        self.assertIsNotNone(materia)
+        self.assertEqual(materia.nombre, "Matemáticas")
+        self.assertEqual(materia.color, "Azul")
+        self.assertEqual(materia.usuario_id, usuario.idUsuario)
