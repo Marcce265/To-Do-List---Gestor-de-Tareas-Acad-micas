@@ -94,6 +94,17 @@ class TaskManager:
     def crear_materia(self, usuario_id: int, nombre: str, color: str) -> Materia:
         """
         HU-003: Crea una materia asociada a un usuario.
+
+        Args:
+            usuario_id (int): ID del usuario propietario de la materia.
+            nombre (str): Nombre de la materia.
+            color (str): Color identificador de la materia.
+
+        Returns:
+            Materia: Objeto Materia creado y persistido en la base de datos.
+
+        Raises:
+            ValueError: Si el usuario no existe o si el nombre/color son inválidos.
         """
 
         session = Session()
@@ -110,6 +121,7 @@ class TaskManager:
                     "El nombre de la materia no puede estar vacío")
             if not color or not color.strip():
                 raise ValueError("El color de la materia no puede estar vacío")
+
             materia = Materia(
                 nombre=nombre.strip(),
                 color=color.strip(),
