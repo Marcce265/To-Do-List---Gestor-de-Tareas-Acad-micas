@@ -2,7 +2,7 @@ from datetime import date
 from typing import Optional
 from sqlalchemy.orm import sessionmaker
 from src.model.declarative_base import engine
-from src.model.modelo import Usuario
+from src.model.modelo import Usuario, Materia
 
 Session = sessionmaker(bind=engine)
 
@@ -88,4 +88,39 @@ class TaskManager:
             # 5. CIERRE (CLEANUP)
             # Este bloque 'finally' se ejecuta SIEMPRE, haya error o no.
             # Cerramos la sesión para liberar memoria y no dejar conexiones colgadas.
+            session.close()
+    def crear_materia(self, usuario_id: int, nombre: str, color: str) -> Materia:
+        """
+        HU-003: Crea una materia asociada a un usuario.
+        """
+        if usuario_id <= 0:
+            raise ValueError("El usuario no es válido")
+
+        if not nombre or not nombre.strip():
+            raise ValueError("El nombre de la materia no puede estar vacío")
+
+        if not color or not color.strip():
+            raise ValueError("El color de la materia no puede estar vacío")
+
+        session = Session()
+        try:
+            usuario = session.query(Usuario).filter_by(
+                idUsuario=usuario_id
+            ).first()
+
+            if not usuario:
+                raise ValueError("El usuario no existe")
+
+            materia = Materia(
+                nombre=nombre.strip(),
+                color=color.strip(),
+                usuario_id=usuario_id
+            )
+
+            session.add(materia)
+            session.commit()
+            session.refresh(materia)
+            return materia
+
+        finally:
             session.close()
