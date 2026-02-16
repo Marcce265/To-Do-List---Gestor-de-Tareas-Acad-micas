@@ -1,4 +1,5 @@
 from datetime import date
+from typing import Optional
 from sqlalchemy.orm import sessionmaker
 from src.model.declarative_base import engine
 from src.model.modelo import Usuario
@@ -50,3 +51,27 @@ class TaskManager:
             return usuario
         finally:
             session.close()
+    def seleccionar_usuario(self, id_usuario: int) -> Optional[Usuario]:
+        """
+        HU-002: Selecciona un usuario por ID.
+        
+        Args:
+            id_usuario: ID del usuario a buscar
+        
+        Returns:
+            Usuario encontrado o None si no existe
+        
+        Raises:
+            ValueError: Si el ID es inválido (≤ 0)
+        """
+        """if id_usuario <= 0:
+            raise ValueError("El ID del usuario debe ser mayor a 0")
+        
+        session = Session()
+        try:
+            usuario = session.query(Usuario).filter_by(
+                idUsuario=id_usuario
+            ).first()
+            return usuario
+        finally:
+            session.close()"""

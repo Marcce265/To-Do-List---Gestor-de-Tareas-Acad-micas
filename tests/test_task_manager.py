@@ -52,3 +52,12 @@ class TestTaskManager(unittest.TestCase):
         self.assertEqual(usuario.nombre, "Juan Pérez")
         self.assertEqual(usuario.correo, "juan@mail.com")
         self.assertIsNotNone(usuario.fecha_creacion)
+
+    def test_hu002_rojo_seleccionar_usuario_id_cero(self):
+        """
+        HU-002 - Caso rojo
+        No se debe permitir ID cero
+        """
+        with self.assertRaises(ValueError) as context:
+            self.tm.seleccionar_usuario(0)
+        self.assertIn("id", str(context.exception).lower())
