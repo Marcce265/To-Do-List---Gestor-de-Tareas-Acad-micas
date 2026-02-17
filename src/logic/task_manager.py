@@ -372,3 +372,55 @@ class TaskManager:
 
         finally:
             session.close()
+
+    def editar_materia(
+        self,
+        id_materia: int,
+        nuevo_nombre: Optional[str] = None,
+        nuevo_color: Optional[str] = None
+    ) -> Materia:
+        """
+        HU-008: Edita una materia existente.
+
+        Args:
+            id_materia: ID de la materia a editar
+            nuevo_nombre: Nuevo nombre (opcional)
+            nuevo_color: Nuevo color (opcional)
+
+        Returns:
+            Materia actualizada
+
+        Raises:
+            ValueError:
+                - Si la materia no existe
+                - Si el nombre está vacío
+                - Si el color está vacío
+        """
+        session = Session()
+        try:
+            materia = session.query(Materia).filter_by(
+                idMateria=id_materia
+            ).first()
+
+            # ✅ Validación 1: Materia inexistente
+            if not materia:
+                raise ValueError("La materia no existe")
+
+            # ✅ Validación 2: Nombre vacío
+            if nuevo_nombre is not None:
+                if not nuevo_nombre.strip():
+                    raise ValueError("El nombre no puede estar vacío")
+                materia.nombre = nuevo_nombre.strip()
+
+            # ✅ Validación 3: Color vacío
+            if nuevo_color is not None:
+                if not nuevo_color.strip():
+                    raise ValueError("El color no puede estar vacío")
+                materia.color = nuevo_color.strip()
+
+            session.commit()
+            session.refresh(materia)
+            return materia
+
+        finally:
+            session.close()
