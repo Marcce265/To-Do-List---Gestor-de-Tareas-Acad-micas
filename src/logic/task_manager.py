@@ -178,31 +178,21 @@ class TaskManager:
         finally:
             session.close()
 
-    def marcar_tarea(self, tarea_id: int) -> Tarea:
-        """
-        HU-005: Marca una tarea como completada.
-
-        Args:
-            tarea_id (int): ID de la tarea a marcar.
-
-        Returns:
-            Tarea: Objeto tarea actualizado.
-
-        Raises:
-            ValueError: Si la tarea no existe.
-        """
-
+    def _cambiar_estado_tarea(self, tarea_id: int, nuevo_estado: EstadoTarea) -> Tarea:
         session = Session()
         try:
-            # Buscar la tarea por ID
             tarea = session.query(Tarea).filter_by(idTarea=tarea_id).first()
 
-            # Validar que exista
             if not tarea:
                 raise ValueError("La tarea no existe")
 
-            # Cambiar estado a COMPLETADA
-            tarea.estado = EstadoTarea.Completada
+            if tarea.estado == nuevo_estado:
+                if nuevo_estado == EstadoTarea.Completada:
+                    raise ValueError("La tarea ya está completada")
+                else:
+                    raise ValueError("La tarea ya está pendiente")
+
+            tarea.estado = nuevo_estado
 
             session.commit()
             session.refresh(tarea)
@@ -211,71 +201,11 @@ class TaskManager:
 
         finally:
             session.close()
+
+
+    def marcar_tarea(self, tarea_id: int) -> Tarea:
+        return self._cambiar_estado_tarea(tarea_id, EstadoTarea.Completada)
+
 
     def desmarcar_tarea(self, tarea_id: int) -> Tarea:
-        """
-        HU-005: Desmarca una tarea (la cambia a Pendiente).
-
-        Args:
-            tarea_id (int): ID de la tarea a desmarcar.
-
-        Returns:
-            Tarea: Objeto tarea actualizado.
-
-        Raises:
-            ValueError: Si la tarea no existe.
-        """
-
-        session = Session()
-        try:
-            # Buscar la tarea por ID
-            tarea = session.query(Tarea).filter_by(idTarea=tarea_id).first()
-
-            # Validar que exista
-            if not tarea:
-                raise ValueError("La tarea no existe")
-
-            # Cambiar estado a PENDIENTE
-            tarea.estado = EstadoTarea.Pendiente
-
-            session.commit()
-            session.refresh(tarea)
-
-            return tarea
-
-        finally:
-            session.close()
-
-    def marcar_tarea(self, tarea_id: int) -> Tarea:
-        """
-        HU-005: Marca una tarea como completada.
-
-        Args:
-            tarea_id (int): ID de la tarea a marcar.
-
-        Returns:
-            Tarea: Objeto tarea actualizado.
-
-        Raises:
-            ValueError: Si la tarea no existe o ya está completada.
-        """
-
-        session = Session()
-        try:
-            tarea = session.query(Tarea).filter_by(idTarea=tarea_id).first()
-
-            if not tarea:
-                raise ValueError("La tarea no existe")
-
-            if tarea.estado == EstadoTarea.Completada:
-                raise ValueError("La tarea ya está completada")
-
-            tarea.estado = EstadoTarea.Completada
-
-            session.commit()
-            session.refresh(tarea)
-
-            return tarea
-
-        finally:
-            session.close()
+        return self._cambiar_estado_tarea(tarea_id, EstadoTarea.Pendiente)
