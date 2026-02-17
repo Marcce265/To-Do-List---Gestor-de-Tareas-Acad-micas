@@ -263,60 +263,21 @@ class TaskManager:
 
     def eliminar_usuario(self, id_usuario: int):
         """
-        Elimina un usuario del sistema por su ID.
+        Elimina un usuario del sistema por su ID. (Versión Final Completa)
         """
-        session = Session() # O self.session si tus compañeros lo configuraron así
-        try:
-            # 1. Buscamos si el usuario existe en la base de datos
-            usuario_a_eliminar = session.query(Usuario).filter_by(idUsuario=id_usuario).first()
-
-            # 2. Si no existe, lanzamos el error esperado
-            if not usuario_a_eliminar:
-                raise ValueError(f"El usuario con ID {id_usuario} no existe.")
-                
-        finally:
-            session.close()
-
-    def eliminar_usuario(self, id_usuario: int):
-        """
-        Elimina un usuario del sistema por su ID.
-        """
-        session = Session() # O usa self.session si así estaba configurado
-        try:
-            # 1. Buscamos si el usuario existe
-            usuario_a_eliminar = session.query(Usuario).filter_by(idUsuario=id_usuario).first()
-
-            # 2. Si no existe, lanzamos error (Esto pasa el Escenario 1)
-            if not usuario_a_eliminar:
-                raise ValueError(f"El usuario con ID {id_usuario} no existe.")
-            
-            # 3. Si existe, lo eliminamos y guardamos los cambios (Esto pasa el Escenario 2)
-            session.delete(usuario_a_eliminar)
-            session.commit()
-                
-        except Exception as e:
-            session.rollback() # Por si algo falla, deshacemos cambios
-            raise e
-        finally:
-            session.close()
-
-    def eliminar_usuario(self, id_usuario: int):
-        """
-        Elimina un usuario del sistema por su ID.
-        """
+        # Validación de tipo (Escenario 3)
         if not isinstance(id_usuario, int):
             raise TypeError("El ID del usuario debe ser un número entero.")
 
-        session = Session() # (O usa self.session si tus compañeros lo usan así)
+        session = Session() 
         try:
-            # 1. Buscamos si el usuario existe
+            # Búsqueda del usuario (Escenario 1)
             usuario_a_eliminar = session.query(Usuario).filter_by(idUsuario=id_usuario).first()
 
-            # 2. Si no existe, lanzamos el error del Escenario 1
             if not usuario_a_eliminar:
                 raise ValueError(f"El usuario con ID {id_usuario} no existe.")
             
-            # 3. Si existe, lo eliminamos y guardamos (Escenario 2)
+            # Eliminación física (Escenario 2)
             session.delete(usuario_a_eliminar)
             session.commit()
                 
