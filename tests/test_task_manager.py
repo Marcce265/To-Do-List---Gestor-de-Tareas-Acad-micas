@@ -285,3 +285,39 @@ class TestTaskManager(unittest.TestCase):
             self.tm.desmarcar_tarea(9999)  # ID inexistente
 
         self.assertIn("tarea", str(context.exception).lower())
+
+    def test_hu005_rojo_marcar_tarea_ya_completada(self):
+        """
+        HU-005 - Escenario 3 (Rojo)
+        No se debe permitir marcar como completada una tarea que ya está completada.
+        """
+
+        from src.model.modelo import Materia, Prioridad, EstadoTarea
+        from src.model.declarative_base import session
+        from datetime import date
+
+        # 1. Preparación: crear usuario y materia reales
+        usuario = self.tm.crear_usuario("Lucía", "lucia@mail.com")
+
+        materia = Materia(nombre="Historia", color="Verde", usuario_id=usuario.idUsuario)
+        session.add(materia)
+        session.commit()
+        session.refresh(materia)
+
+        # 2. Crear tarea válida
+        tarea = self.tm.crear_tarea(
+            titulo="Leer capítulo 5",
+            descripcion="Resumen del libro",
+            prioridad=Prioridad.Media,
+            fecha_entrega=date.today(),
+            materia_id=materia.idMateria
+        )
+
+        # 3. Marcarla como completada
+        self.tm.marcar_tarea(tarea.idTarea)
+
+        # 4. Intentar marcarla otra vez (debe fallar)
+        with self.assertRaises(ValueError) as context:
+            self.tm.marcar_tarea(tarea.idTarea)
+
+        self.assertIn("completada", str(context.exception).lower())
