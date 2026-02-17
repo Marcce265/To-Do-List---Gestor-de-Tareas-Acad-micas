@@ -143,3 +143,37 @@ class TestTaskManager(unittest.TestCase):
         self.assertEqual(materia.nombre, "Matemáticas")
         self.assertEqual(materia.color, "Azul")
         self.assertEqual(materia.usuario_id, usuario.idUsuario)
+
+    def test_hu004_rojo_crear_tarea_titulo_vacio(self):
+        """
+        HU-004 - Escenario 1 (Rojo)
+        No se debe permitir crear una tarea con título vacío
+        """
+        # 1. Preparación (Setup)
+        from src.model.modelo import Materia, Prioridad
+        from src.model.declarative_base import session
+        
+        # Creamos un usuario usando el método que ya existe
+        usuario = self.tm.crear_usuario("Ana", "ana@mail.com")
+        
+        # Creamos una materia directamente en la base de datos para la prueba
+        materia = Materia(nombre="Física", color="Rojo", usuario_id=usuario.idUsuario)
+        session.add(materia)
+        session.commit()
+        session.refresh(materia)
+        materia_id = materia.idMateria
+
+        # 2. Acción y Aserción
+        with self.assertRaises(ValueError) as context:
+            # Intentamos crear la tarea con título vacío
+            self.tm.crear_tarea(
+                titulo="", 
+                descripcion="Resolver ejercicios de cinemática",
+                prioridad=Prioridad.Media,
+                fecha_entrega=date.today(),
+                materia_id=materia_id
+            )
+        
+        # Verificamos que el error mencione el problema con el título
+        self.assertIn("título", str(context.exception).lower())
+
