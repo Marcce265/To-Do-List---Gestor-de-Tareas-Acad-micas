@@ -295,132 +295,42 @@ class TaskManager:
     ) -> Materia:
         """
         HU-008: Edita una materia existente.
-
-        Args:
-            id_materia: ID de la materia a editar
-            nuevo_nombre: Nuevo nombre (opcional)
-            nuevo_color: Nuevo color (opcional)
-
-        Returns:
-            Materia actualizada
-
-        Raises:
-            ValueError: Si la materia no existe
         """
+
+        # ✅ Refactor 1: Validación de tipo
+        if not isinstance(id_materia, int):
+            raise TypeError("El ID de la materia debe ser un número entero.")
+
         session = Session()
         try:
             materia = session.query(Materia).filter_by(
                 idMateria=id_materia
             ).first()
 
-            # ✅ VALIDACIÓN CLAVE DEL TEST 1 (VERDE)
+            # ✅ Validación materia inexistente
             if not materia:
                 raise ValueError("La materia no existe")
 
-            # (Por ahora no hacemos más validaciones,
-            # eso vendrá en los siguientes tests rojo/verde)
-
-            session.commit()
-            session.refresh(materia)
-            return materia
-
-        finally:
-            session.close()
-
-    def editar_materia(
-        self,
-        id_materia: int,
-        nuevo_nombre: Optional[str] = None,
-        nuevo_color: Optional[str] = None
-    ) -> Materia:
-        """
-        HU-008: Edita una materia existente.
-
-        Args:
-            id_materia: ID de la materia a editar
-            nuevo_nombre: Nuevo nombre (opcional)
-            nuevo_color: Nuevo color (opcional)
-
-        Returns:
-            Materia actualizada
-
-        Raises:
-            ValueError: Si la materia no existe
-                        Si el nombre está vacío
-        """
-        session = Session()
-        try:
-            materia = session.query(Materia).filter_by(
-                idMateria=id_materia
-            ).first()
-
-            # ✅ Validación 1: Materia inexistente (Test 1)
-            if not materia:
-                raise ValueError("La materia no existe")
-
-            # ✅ Validación 2: Nombre vacío (Test 2)
+            # ✅ Refactor 2: Validación limpia reutilizable
             if nuevo_nombre is not None:
-                if not nuevo_nombre.strip():
+                nombre_limpio = nuevo_nombre.strip()
+                if not nombre_limpio:
                     raise ValueError("El nombre no puede estar vacío")
-                materia.nombre = nuevo_nombre.strip()
+                materia.nombre = nombre_limpio
 
-            # (Color lo validaremos en el siguiente test rojo)
-
-            session.commit()
-            session.refresh(materia)
-            return materia
-
-        finally:
-            session.close()
-
-    def editar_materia(
-        self,
-        id_materia: int,
-        nuevo_nombre: Optional[str] = None,
-        nuevo_color: Optional[str] = None
-    ) -> Materia:
-        """
-        HU-008: Edita una materia existente.
-
-        Args:
-            id_materia: ID de la materia a editar
-            nuevo_nombre: Nuevo nombre (opcional)
-            nuevo_color: Nuevo color (opcional)
-
-        Returns:
-            Materia actualizada
-
-        Raises:
-            ValueError:
-                - Si la materia no existe
-                - Si el nombre está vacío
-                - Si el color está vacío
-        """
-        session = Session()
-        try:
-            materia = session.query(Materia).filter_by(
-                idMateria=id_materia
-            ).first()
-
-            # ✅ Validación 1: Materia inexistente
-            if not materia:
-                raise ValueError("La materia no existe")
-
-            # ✅ Validación 2: Nombre vacío
-            if nuevo_nombre is not None:
-                if not nuevo_nombre.strip():
-                    raise ValueError("El nombre no puede estar vacío")
-                materia.nombre = nuevo_nombre.strip()
-
-            # ✅ Validación 3: Color vacío
             if nuevo_color is not None:
-                if not nuevo_color.strip():
+                color_limpio = nuevo_color.strip()
+                if not color_limpio:
                     raise ValueError("El color no puede estar vacío")
-                materia.color = nuevo_color.strip()
+                materia.color = color_limpio
 
             session.commit()
             session.refresh(materia)
             return materia
+
+        except Exception as e:
+            session.rollback()
+            raise e
 
         finally:
             session.close()
