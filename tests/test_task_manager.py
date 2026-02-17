@@ -274,3 +274,14 @@ class TestTaskManager(unittest.TestCase):
 
         # Verificamos que el mensaje mencione que la tarea no existe
         self.assertIn("tarea", str(context.exception).lower())
+
+    def test_hu005_rojo_desmarcar_tarea_inexistente(self):
+        """
+        HU-005 - Escenario 2 (Rojo)
+        No se debe permitir desmarcar una tarea que no existe.
+        """
+
+        with self.assertRaises(ValueError) as context:
+            self.tm.desmarcar_tarea(9999)  # ID inexistente
+
+        self.assertIn("tarea", str(context.exception).lower())
