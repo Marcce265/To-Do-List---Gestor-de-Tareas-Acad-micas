@@ -177,3 +177,24 @@ class TestTaskManager(unittest.TestCase):
         # Verificamos que el error mencione el problema con el título
         self.assertIn("título", str(context.exception).lower())
 
+    def test_hu004_rojo_crear_tarea_materia_inexistente(self):
+        """
+        HU-004 - Escenario 2 (Rojo)
+        No se debe permitir crear una tarea si la materia_id no existe.
+        """
+        from src.model.modelo import Prioridad
+        from datetime import date
+        
+        with self.assertRaises(ValueError) as context:
+            # Intentamos crear tarea con materia_id = 9999 (que no existe)
+            self.tm.crear_tarea(
+                titulo="Aprobar el curso", 
+                descripcion="Terminar el proyecto de software",
+                prioridad=Prioridad.Alta,
+                fecha_entrega=date.today(),
+                materia_id=9999
+            )
+        
+        # El mensaje de error debe mencionar que la materia no existe
+        self.assertIn("materia", str(context.exception).lower())
+
