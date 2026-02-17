@@ -276,7 +276,7 @@ class TaskManager:
                 
         finally:
             session.close()
-            
+
     def eliminar_usuario(self, id_usuario: int):
         """
         Elimina un usuario del sistema por su ID.
@@ -296,6 +296,32 @@ class TaskManager:
                 
         except Exception as e:
             session.rollback() # Por si algo falla, deshacemos cambios
+            raise e
+        finally:
+            session.close()
+
+    def eliminar_usuario(self, id_usuario: int):
+        """
+        Elimina un usuario del sistema por su ID.
+        """
+        if not isinstance(id_usuario, int):
+            raise TypeError("El ID del usuario debe ser un número entero.")
+
+        session = Session() # (O usa self.session si tus compañeros lo usan así)
+        try:
+            # 1. Buscamos si el usuario existe
+            usuario_a_eliminar = session.query(Usuario).filter_by(idUsuario=id_usuario).first()
+
+            # 2. Si no existe, lanzamos el error del Escenario 1
+            if not usuario_a_eliminar:
+                raise ValueError(f"El usuario con ID {id_usuario} no existe.")
+            
+            # 3. Si existe, lo eliminamos y guardamos (Escenario 2)
+            session.delete(usuario_a_eliminar)
+            session.commit()
+                
+        except Exception as e:
+            session.rollback()
             raise e
         finally:
             session.close()
