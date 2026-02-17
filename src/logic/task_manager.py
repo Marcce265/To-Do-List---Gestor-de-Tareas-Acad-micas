@@ -260,3 +260,22 @@ class TaskManager:
             return usuario
         finally:
             session.close()
+
+    def eliminar_usuario(self, id_usuario: int):
+        """
+        Elimina un usuario del sistema por su ID.
+        """
+        session = Session() # O self.session si tus compañeros lo configuraron así
+        try:
+            # 1. Buscamos si el usuario existe en la base de datos
+            usuario_a_eliminar = session.query(Usuario).filter_by(idUsuario=id_usuario).first()
+
+            # 2. Si no existe, lanzamos el error esperado
+            if not usuario_a_eliminar:
+                raise ValueError(f"El usuario con ID {id_usuario} no existe.")
+                
+        finally:
+            session.close()
+    
+
+    

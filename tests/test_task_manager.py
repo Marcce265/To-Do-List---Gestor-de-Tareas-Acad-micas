@@ -363,7 +363,9 @@ class TestTaskManager(unittest.TestCase):
         HU-007 - Escenario 1: Intentar eliminar un usuario que no existe.
         Debe lanzar un ValueError.
         """
+        # Intentamos eliminar un ID fantasma
         with self.assertRaises(ValueError) as context:
-            self.tm.eliminar_perfil(999) # Mandamos un ID fantasma
+            self.tm.eliminar_usuario(999) 
         
+        # Verificamos que el error nos avise que no existe
         self.assertIn("no existe", str(context.exception).lower())
