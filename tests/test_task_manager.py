@@ -498,3 +498,20 @@ class TestTaskManager(unittest.TestCase):
                 tarea.idTarea, nuevo_titulo="   "
             )
         self.assertIn("título", str(context.exception).lower())
+
+    def test_hu009_rojo_editar_tarea_prioridad_invalida(self):
+        usuario = self.tm.crear_usuario("Juan", "juan@mail.com")
+        materia = self.tm.crear_materia(usuario.idUsuario, "Mat")
+        tarea = self.tm.crear_tarea(
+            titulo="Estudiar",
+            descripcion="",
+            materia_id=materia.idMateria,
+            prioridad=Prioridad.Media,
+            fecha=date.today()
+        )
+        with self.assertRaises(ValueError) as context:
+            self.tm.editar_tarea(
+                tarea.idTarea,
+                nueva_prioridad="SuperUrgente"
+            )
+        self.assertIn("prioridad", str(context.exception).lower())
