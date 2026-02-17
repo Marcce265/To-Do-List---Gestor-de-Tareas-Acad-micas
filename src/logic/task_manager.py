@@ -216,6 +216,20 @@ class TaskManager:
         nuevo_nombre: Optional[str] = None,
         nuevo_correo: Optional[str] = None
     ) -> Usuario:
+        """
+        HU-006: Edita un usuario existente.
+
+        Args:
+            id_usuario: ID del usuario a editar
+            nuevo_nombre: Nuevo nombre (opcional)
+            nuevo_correo: Nuevo correo (opcional)
+
+        Returns:
+            Usuario actualizado
+
+        Raises:
+            ValueError: Si nombre vacío o correo duplicado
+        """
         session = Session()
         try:
             usuario = session.query(Usuario).filter_by(
