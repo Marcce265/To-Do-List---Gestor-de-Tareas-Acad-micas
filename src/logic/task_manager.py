@@ -150,27 +150,28 @@ class TaskManager:
         # Validaciones (Fail Fast)
         if not titulo or not titulo.strip():
             raise ValueError("El título de la tarea no puede estar vacío")
-        
+
         if not isinstance(prioridad, Prioridad):
             raise ValueError("La prioridad debe ser Baja, Media o Alta")
-        
+
         session = Session()
         try:
-            materia = session.query(Materia).filter_by(idMateria=materia_id).first()
+            materia = session.query(Materia).filter_by(
+                idMateria=materia_id).first()
             if not materia:
                 raise ValueError("La materia no existe")
-            
+
             tarea = Tarea(
                 titulo=titulo.strip(),
                 descripcion=descripcion,
                 materia_id=materia_id,
                 prioridad=prioridad,
                 fechaEntrega=fecha_entrega,
-                estado=EstadoTarea.Pendiente # <--- Excelente añadido por defecto
+                estado=EstadoTarea.Pendiente  # <--- Excelente añadido por defecto
                 # progreso=0.0,              # <-- Descomenta solo si existe en modelo.py
                 # fecha_creacion=date.today() # <-- Descomenta solo si existe en modelo.py
             )
-            
+
             session.add(tarea)
             session.commit()
             session.refresh(tarea)
@@ -202,14 +203,12 @@ class TaskManager:
         finally:
             session.close()
 
-
     def marcar_tarea(self, tarea_id: int) -> Tarea:
         return self._cambiar_estado_tarea(tarea_id, EstadoTarea.Completada)
 
-
     def desmarcar_tarea(self, tarea_id: int) -> Tarea:
         return self._cambiar_estado_tarea(tarea_id, EstadoTarea.Pendiente)
-    
+
     def editar_usuario(
         self,
         id_usuario: int,
@@ -269,18 +268,19 @@ class TaskManager:
         if not isinstance(id_usuario, int):
             raise TypeError("El ID del usuario debe ser un número entero.")
 
-        session = Session() 
+        session = Session()
         try:
             # Búsqueda del usuario (Escenario 1)
-            usuario_a_eliminar = session.query(Usuario).filter_by(idUsuario=id_usuario).first()
+            usuario_a_eliminar = session.query(
+                Usuario).filter_by(idUsuario=id_usuario).first()
 
             if not usuario_a_eliminar:
                 raise ValueError(f"El usuario con ID {id_usuario} no existe.")
-            
+
             # Eliminación física (Escenario 2)
             session.delete(usuario_a_eliminar)
             session.commit()
-                
+
         except Exception as e:
             session.rollback()
             raise e
@@ -334,7 +334,7 @@ class TaskManager:
 
         finally:
             session.close()
-            
+
     def editar_tarea(
         self,
         id_tarea: int,
@@ -383,5 +383,32 @@ class TaskManager:
             session.commit()
             session.refresh(tarea)
             return tarea
+        finally:
+            session.close()
+
+    def seleccionar_materia(self, materia_id: int):
+        if not isinstance(materia_id, int):
+            raise TypeError("El ID de la materia debe ser un número")
+
+        session = Session()
+        try:
+            return session.query(Materia).filter_by(
+                idMateria=materia_id
+            ).first()
+        finally:
+            session.close()
+
+    def eliminar_materia(self, materia_id: int):
+        session = Session()
+        try:
+            materia = session.query(Materia).filter_by(
+                idMateria=materia_id
+            ).first()
+
+            if not materia:
+                return  # No hacemos nada si no existe (como acordamos)
+
+            session.delete(materia)
+            session.commit()
         finally:
             session.close()
