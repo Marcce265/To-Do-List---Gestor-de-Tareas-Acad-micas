@@ -515,3 +515,23 @@ class TestTaskManager(unittest.TestCase):
                 nueva_prioridad="SuperUrgente"
             )
         self.assertIn("prioridad", str(context.exception).lower())
+
+    def test_hu009_verde_editar_tarea_caso_feliz(self):
+        usuario = self.tm.crear_usuario("Juan", "juan@mail.com")
+        materia = self.tm.crear_materia(usuario.idUsuario, "Mat", "#FF5733")
+        tarea = self.tm.crear_tarea(
+            titulo="Estudiar",
+            descripcion="",
+            materia_id=materia.idMateria,
+            prioridad=Prioridad.Media,
+            fecha_entrega=date.today()
+        )
+        editada = self.tm.editar_tarea(
+            tarea.idTarea,
+            nuevo_titulo="Estudiar para el examen",
+            nueva_descripcion="Capítulos 1, 2 y 3",
+            nueva_prioridad=Prioridad.Alta
+        )
+        self.assertEqual(editada.titulo, "Estudiar para el examen")
+        self.assertEqual(editada.descripcion, "Capítulos 1, 2 y 3")
+        self.assertEqual(editada.prioridad, Prioridad.Alta)
