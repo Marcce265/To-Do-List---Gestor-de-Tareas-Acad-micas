@@ -329,3 +329,11 @@ class TestTaskManager(unittest.TestCase):
                 usuario.idUsuario, nuevo_nombre=""
             )
         self.assertIn("nombre", str(context.exception).lower())
+
+    def test_hu006_rojo_editar_usuario_nombre_solo_espacios(self):
+        usuario = self.tm.crear_usuario("Juan", "juan@mail.com")
+        with self.assertRaises(ValueError) as context:
+            self.tm.editar_usuario(
+                usuario.idUsuario, nuevo_nombre="   "
+            )
+        self.assertIn("nombre", str(context.exception).lower())
