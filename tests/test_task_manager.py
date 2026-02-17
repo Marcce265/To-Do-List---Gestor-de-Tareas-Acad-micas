@@ -485,13 +485,13 @@ class TestTaskManager(unittest.TestCase):
         
     def test_hu009_rojo_editar_tarea_titulo_solo_espacios(self):
         usuario = self.tm.crear_usuario("Juan", "juan@mail.com")
-        materia = self.tm.crear_materia(usuario.idUsuario, "Mat")
+        materia = self.tm.crear_materia(usuario.idUsuario, "Mat", "#FF5733")
         tarea = self.tm.crear_tarea(
             titulo="Estudiar",
             descripcion="",
             materia_id=materia.idMateria,
             prioridad=Prioridad.Media,
-            fecha=date.today()
+            fecha_entrega=date.today()
         )
         with self.assertRaises(ValueError) as context:
             self.tm.editar_tarea(
@@ -501,13 +501,13 @@ class TestTaskManager(unittest.TestCase):
 
     def test_hu009_rojo_editar_tarea_prioridad_invalida(self):
         usuario = self.tm.crear_usuario("Juan", "juan@mail.com")
-        materia = self.tm.crear_materia(usuario.idUsuario, "Mat")
+        materia = self.tm.crear_materia(usuario.idUsuario, "Mat", "#FF5733")
         tarea = self.tm.crear_tarea(
             titulo="Estudiar",
             descripcion="",
             materia_id=materia.idMateria,
             prioridad=Prioridad.Media,
-            fecha=date.today()
+            fecha_entrega=date.today()
         )
         with self.assertRaises(ValueError) as context:
             self.tm.editar_tarea(
