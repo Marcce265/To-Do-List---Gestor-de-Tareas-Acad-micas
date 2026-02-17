@@ -414,3 +414,27 @@ class TestTaskManager(unittest.TestCase):
 
         # Verificamos que el mensaje mencione que la materia no existe
         self.assertIn("materia", str(context.exception).lower())
+
+    def test_hu008_rojo_editar_materia_nombre_vacio(self):
+        """
+        HU-008 - Escenario 2 (Rojo)
+        No se debe permitir editar una materia con nombre vacío.
+        """
+
+        # 1️⃣ Preparación: Crear usuario y materia válida
+        usuario = self.tm.crear_usuario("Laura", "laura@mail.com")
+        materia = self.tm.crear_materia(
+            usuario.idUsuario,
+            "Biología",
+            "Verde"
+        )
+
+        # 2️⃣ Acción y Aserción: Intentar editar con nombre vacío
+        with self.assertRaises(ValueError) as context:
+            self.tm.editar_materia(
+                materia.idMateria,
+                nuevo_nombre=""  # ❌ nombre vacío
+            )
+
+        # 3️⃣ Verificamos que el error mencione el problema
+        self.assertIn("nombre", str(context.exception).lower())
