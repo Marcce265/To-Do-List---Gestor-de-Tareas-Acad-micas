@@ -369,3 +369,21 @@ class TestTaskManager(unittest.TestCase):
         
         # Verificamos que el error nos avise que no existe
         self.assertIn("no existe", str(context.exception).lower())
+
+    def test_hu007_escenario2_rojo_eliminar_usuario_existente(self):
+        """
+        HU-007 - Escenario 2: Eliminar un usuario que sí existe.
+        El usuario debe desaparecer de la base de datos.
+        """
+        # 1. Preparación: Creamos un usuario válido
+        # (Ajusta 'crear_usuario' si tu equipo lo llamó diferente)
+        usuario_nuevo = self.tm.crear_usuario("Usuario a Eliminar")
+        id_real = usuario_nuevo.idUsuario
+        
+        # 2. Acción: 
+        self.tm.eliminar_usuario(id_real)
+        
+        # 3. Aserción: Lo buscamos de nuevo. Como lo borramos, debería darnos None.
+        # (Ajusta 'seleccionar_usuario' si tu equipo lo llamó diferente)
+        usuario_buscado = self.tm.seleccionar_usuario(id_real)
+        self.assertIsNone(usuario_buscado, "El usuario aún existe en la BD, no fue eliminado")
