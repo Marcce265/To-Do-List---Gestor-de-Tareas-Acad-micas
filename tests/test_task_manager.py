@@ -337,3 +337,13 @@ class TestTaskManager(unittest.TestCase):
                 usuario.idUsuario, nuevo_nombre="   "
             )
         self.assertIn("nombre", str(context.exception).lower())
+
+    def test_hu006_rojo_editar_usuario_correo_duplicado(self):
+        self.tm.crear_usuario("Juan", "juan@mail.com")
+        usuario2 = self.tm.crear_usuario("Pedro", "pedro@mail.com")
+        with self.assertRaises(ValueError) as context:
+            self.tm.editar_usuario(
+                usuario2.idUsuario,
+                nuevo_correo="juan@mail.com"
+            )
+        self.assertIn("correo", str(context.exception).lower())
