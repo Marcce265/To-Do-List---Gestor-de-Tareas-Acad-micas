@@ -228,3 +228,37 @@ class TestTaskManager(unittest.TestCase):
         # 3. Verificamos que el error mencione el problema con la prioridad
         self.assertIn("prioridad", str(context.exception).lower())
 
+    def test_hu004_verde_crear_tarea_caso_feliz(self):
+        """
+        HU-004 - Caso verde (Azul/Refactor)
+        Crear tarea con datos válidos
+        """
+        from src.model.modelo import Materia, Prioridad, EstadoTarea
+        from src.model.declarative_base import session
+        from datetime import date
+
+        # 1. Preparación
+        usuario = self.tm.crear_usuario("Juan", "juan@mail.com")
+        
+        # Creamos la materia directo en BD para no depender de métodos externos
+        materia = Materia(nombre="Matemáticas", color="Rojo", usuario_id=usuario.idUsuario)
+        session.add(materia)
+        session.commit()
+        session.refresh(materia)
+
+        # 2. Acción
+        tarea = self.tm.crear_tarea(
+            titulo="Estudiar capítulo 1",
+            descripcion="Repasar ejercicios",
+            prioridad=Prioridad.Alta,
+            fecha_entrega=date.today(),
+            materia_id=materia.idMateria
+        )
+        
+        # 3. Aserciones
+        self.assertIsNotNone(tarea, "La tarea debe ser creada")
+        self.assertEqual(tarea.titulo, "Estudiar capítulo 1")
+        self.assertEqual(tarea.estado, EstadoTarea.Pendiente, "El estado por defecto debe ser Pendiente")
+        self.assertEqual(tarea.prioridad, Prioridad.Alta)
+        # self.assertEqual(tarea.progreso, 0.0) # Descomenta si usas el campo progreso
+

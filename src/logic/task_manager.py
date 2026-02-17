@@ -2,7 +2,7 @@ from datetime import date
 from typing import Optional
 from sqlalchemy.orm import sessionmaker
 from src.model.declarative_base import engine
-from src.model.modelo import Usuario, Materia, Tarea, Prioridad
+from src.model.modelo import Usuario, Materia, Tarea, Prioridad, EstadoTarea
 
 Session = sessionmaker(bind=engine)
 
@@ -136,35 +136,41 @@ class TaskManager:
         finally:
             session.close()
 
-    def crear_tarea(self, titulo: str, descripcion: str, prioridad: Prioridad, fecha_entrega: date, materia_id: int) -> Tarea:
+    def crear_tarea(
+        self,
+        titulo: str,
+        descripcion: str,
+        prioridad: Prioridad,
+        fecha_entrega: date,
+        materia_id: int
+    ) -> Tarea:
         """
-        HU-004: Crea una nueva tarea asociada a una materia.
+        HU-004: Crea una tarea asociada a una materia.
         """
-        # Validación Escenario 1: Título vacío
+        # Validaciones (Fail Fast)
         if not titulo or not titulo.strip():
             raise ValueError("El título de la tarea no puede estar vacío")
-            
-        # =========================================================
-         # ESCENARIO 3 (VERDE) <---
-        # =========================================================
+        
         if not isinstance(prioridad, Prioridad):
-            raise ValueError("La prioridad asignada no es válida. Use Prioridad.Baja, Prioridad.Media o Prioridad.Alta.")
-            
+            raise ValueError("La prioridad debe ser Baja, Media o Alta")
+        
         session = Session()
         try:
-            # Validación Escenario 2: Verificar que la materia exista
-            materia_existente = session.query(Materia).filter_by(idMateria=materia_id).first()
-            if not materia_existente:
-                raise ValueError(f"La materia con ID {materia_id} no existe. No se puede crear la tarea.")
-
-            # Si pasa todas las validaciones, creamos la tarea
+            materia = session.query(Materia).filter_by(idMateria=materia_id).first()
+            if not materia:
+                raise ValueError("La materia no existe")
+            
             tarea = Tarea(
                 titulo=titulo.strip(),
-                descripcion=descripcion.strip() if descripcion else "",
+                descripcion=descripcion,
+                materia_id=materia_id,
                 prioridad=prioridad,
                 fechaEntrega=fecha_entrega,
-                materia_id=materia_id
+                estado=EstadoTarea.Pendiente # <--- Excelente añadido por defecto
+                # progreso=0.0,              # <-- Descomenta solo si existe en modelo.py
+                # fecha_creacion=date.today() # <-- Descomenta solo si existe en modelo.py
             )
+            
             session.add(tarea)
             session.commit()
             session.refresh(tarea)
