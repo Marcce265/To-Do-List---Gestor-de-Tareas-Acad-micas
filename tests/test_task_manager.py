@@ -615,3 +615,37 @@ class TestTaskManager(unittest.TestCase):
 
         self.assertIn("id", str(context.exception).lower())
 
+    def test_hu010_eliminar_materia_no_afecta_otras_materias(self):
+        """
+        HU-010 - Caso Rojo
+        Eliminar una materia no debe eliminar otras materias del mismo usuario.
+        """
+
+        usuario = self.tm.crear_usuario("Ana", "ana@mail.com")
+
+        materia_1 = self.tm.crear_materia(
+            usuario.idUsuario,
+            "Física",
+            "Azul"
+        )
+
+        materia_2 = self.tm.crear_materia(
+            usuario.idUsuario,
+            "Química",
+            "Rojo"
+        )
+
+        # Eliminamos SOLO la primera materia
+        self.tm.eliminar_materia(materia_1.idMateria)
+
+        # La materia eliminada no debe existir
+        self.assertIsNone(
+            self.tm.seleccionar_materia(materia_1.idMateria)
+        )
+
+        # La otra materia DEBE seguir existiendo
+        materia_restante = self.tm.seleccionar_materia(materia_2.idMateria)
+        self.assertIsNotNone(
+            materia_restante,
+            "Eliminar una materia no debe afectar otras materias"
+        )
