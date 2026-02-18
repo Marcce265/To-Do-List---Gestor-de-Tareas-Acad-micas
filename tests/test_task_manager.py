@@ -386,7 +386,7 @@ class TestTaskManager(unittest.TestCase):
             "Usuario a Eliminar", "eliminar@prueba.com")
         id_real = usuario_nuevo.idUsuario
 
-        # 2. Acción: Lo eliminamos
+        # 2. Acción: Lo eliminamos usando el método del dominio
         self.tm.eliminar_usuario(id_real)
 
         # 3. Aserción: Lo buscamos de nuevo. Debería darnos None.
