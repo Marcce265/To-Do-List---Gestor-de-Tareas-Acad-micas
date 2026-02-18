@@ -570,3 +570,36 @@ class TestTaskManager(unittest.TestCase):
             "La materia no fue eliminada correctamente"
         )
     
+    def test_hu010_eliminar_materia_elimina_tareas(self):
+        """
+        HU-010 - Caso Rojo
+        Al eliminar una materia, también deben eliminarse sus tareas asociadas
+        """
+
+        usuario = self.tm.crear_usuario("Ana", "ana@mail.com")
+        materia = self.tm.crear_materia(
+            usuario.idUsuario,
+            "Física",
+            "Azul"
+        )
+
+        tarea = self.tm.crear_tarea(
+            titulo="Resolver ejercicios",
+            descripcion="Capítulo 3",
+            prioridad=Prioridad.Media,
+            fecha_entrega=date.today(),
+            materia_id=materia.idMateria
+        )
+
+        tarea_id = tarea.idTarea
+        materia_id = materia.idMateria
+
+        # Acción
+        self.tm.eliminar_materia(materia_id)
+
+        # Verificación
+        tarea_buscada = self.tm.seleccionar_tarea(tarea_id)
+        self.assertIsNone(
+            tarea_buscada,
+            "Las tareas asociadas a la materia no fueron eliminadas"
+        )

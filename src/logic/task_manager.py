@@ -406,9 +406,10 @@ class TaskManager:
             ).first()
 
             if not materia:
-                return  # No hacemos nada si no existe (como acordamos)
+                return  
 
             session.delete(materia)
             session.commit()
         finally:
             session.close()
+
