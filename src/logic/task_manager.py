@@ -406,10 +406,22 @@ class TaskManager:
             ).first()
 
             if not materia:
-                return  
+                return
+
+            session.query(Tarea).filter_by(
+                materia_id=materia_id
+            ).delete()
 
             session.delete(materia)
             session.commit()
         finally:
             session.close()
 
+    def seleccionar_tarea(self, tarea_id: int):
+        session = Session()
+        try:
+            return session.query(Tarea).filter_by(
+                idTarea=tarea_id
+            ).first()
+        finally:
+            session.close()
