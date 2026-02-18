@@ -260,3 +260,22 @@ class TaskManager:
             return usuario
         finally:
             session.close()
+
+    def eliminar_tarea(self, id_tarea: int):
+        """
+        HU-011 - Escenario 1: Lógica para intentar eliminar una tarea.
+        """
+        
+        session = Session()
+        try:
+            # Buscamos la tarea en la tabla Tarea
+            tarea_a_eliminar = session.query(Tarea).filter_by(idTarea=id_tarea).first()
+
+            # Si no se encuentra, lanzamos la excepción que el test espera
+            if not tarea_a_eliminar:
+                raise ValueError(f"La tarea con ID {id_tarea} no existe.")
+            
+            # (El código para borrar lo completaremos en el Escenario 2)
+            
+        finally:
+            session.close()
