@@ -399,6 +399,10 @@ class TaskManager:
             session.close()
 
     def eliminar_materia(self, materia_id: int):
+
+        if not isinstance(materia_id, int):
+            raise TypeError("El ID debe ser un entero")
+
         session = Session()
         try:
             materia = session.query(Materia).filter_by(
