@@ -405,3 +405,14 @@ class TestTaskManager(unittest.TestCase):
         tarea_en_db = session.query(Tarea).filter_by(idTarea=id_real).first()
         
         self.assertIsNone(tarea_en_db, "La tarea no fue eliminada de la base de datos")
+
+    def test_hu011_escenario3_rojo_eliminar_tarea_tipo_invalido(self):
+        """
+        HU-011 - Escenario 3: Intentar eliminar una tarea pasando un tipo de dato no entero.
+        Debe lanzar un TypeError.
+        """
+        # Intentamos pasar un string en lugar de un entero
+        with self.assertRaises(TypeError) as context:
+            self.tm.eliminar_tarea("ID_INVALIDO")
+        
+        self.assertIn("debe ser un número entero", str(context.exception).lower())
