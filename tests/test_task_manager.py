@@ -370,3 +370,21 @@ class TestTaskManager(unittest.TestCase):
         
         # Verificamos que el error contenga el mensaje esperado
         self.assertIn("la tarea con id 9999 no existe", str(context.exception).lower())
+
+    def test_hu011_escenario2_rojo_eliminar_tarea_existente(self):
+        """
+        HU-011 - Escenario 2: Eliminar una tarea que sí existe.
+        
+        """
+        # 1. Preparación: Creamos materia y tarea (ajusta según tus funciones reales)
+        materia = self.tm.crear_materia("Materia de Prueba", "#000000")
+        tarea = self.tm.crear_tarea("Tarea a borrar", "Descripción", materia.idMateria)
+        id_real = tarea.idTarea
+        
+        # 2. Acción: Borramos la tarea
+        self.tm.eliminar_tarea(id_real)
+        
+        # 3. Verificación: Buscamos la tarea por ID. Debería retornar None.
+        # (Asumo que tienes una función seleccionar_tarea o similar)
+        tarea_buscada = self.tm.seleccionar_tarea(id_real) 
+        self.assertIsNone(tarea_buscada, "La tarea no fue eliminada de la base de datos")
