@@ -263,22 +263,26 @@ class TaskManager:
 
     def eliminar_tarea(self, id_tarea: int):
         """
-        Elimina una tarea por su ID.
+        Elimina una tarea verificando integridad de datos y existencia.
         """
+        # 1. Validación de tipo (Escenario 3)
+        if not isinstance(id_tarea, int):
+            raise TypeError("El ID de la tarea debe ser un número entero.")
+
         from src.model.declarative_base import session
         from src.model.modelo import Tarea
 
-        # 1. Buscar la tarea
-        tarea_a_eliminar = session.query(Tarea).filter_by(idTarea=id_tarea).first()
-
-        # 2. Si no existe, lanzamos el error que espera el Escenario 1
-        if not tarea_a_eliminar:
-            raise ValueError(f"La tarea con id {id_tarea} no existe")
-        
-        # 3. Si existe, la borramos
         try:
+            # 2. Búsqueda (Escenario 1)
+            tarea_a_eliminar = session.query(Tarea).filter_by(idTarea=id_tarea).first()
+
+            if not tarea_a_eliminar:
+                raise ValueError(f"La tarea con id {id_tarea} no existe")
+            
+            # 3. Borrado (Escenario 2)
             session.delete(tarea_a_eliminar)
             session.commit()
+                
         except Exception as e:
             session.rollback()
             raise e
