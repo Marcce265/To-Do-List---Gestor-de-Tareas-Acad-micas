@@ -291,11 +291,8 @@ def flujo_crear_tarea():
     prioridad = [Prioridad.Baja, Prioridad.Media, Prioridad.Alta][op_prior - 1]
 
     subtitulo("Fecha de entrega")
-    print("     [1] En 3 días")
-    print("     [2] En 1 semana")
-    print("     [3] En 2 semanas")
-    print("     [4] Ingresar fecha manualmente (YYYY-MM-DD)")
-    op_fecha = menu(["En 3 días", "En 1 semana", "En 2 semanas", "Fecha manual"])
+  
+    op_fecha = menu(["En 3 días", "En 1 semana", "En 2 semanas", "Fecha manual (YYYY-MM-DD)"])
 
     if op_fecha == 1:
         fecha = date.today() + timedelta(days=3)
