@@ -6,4 +6,4 @@ def main(page: ft.Page):
         ft.Text("Hola Ernesto, Flet está funcionando 🚀")
     )
 
-ft.run(main)
+ft.app(target=main)
