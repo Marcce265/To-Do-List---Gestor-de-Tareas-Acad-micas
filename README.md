@@ -28,33 +28,45 @@ Facilitar la organización académica mediante un gestor de tareas que permita:
 1. **Clonar el repositorio**
 ```bash
 git clone https://github.com/Marcce265/ToDoList_GestordeTareasAcadmicas.git
-cd TO-DO-LIST-GESTOR-DE-TAREAS-ACADEMICAS
+cd ToDoList_GestordeTareasAcadmicas
 ```
 
 2. **Crear entorno virtual (recomendado)**
 ```bash
-# Windows
-python -m venv venv
-venv\Scripts\activate
+python -m venv .venv
+```
+3. **Activar entorno virtual**
+```bash
+# Windows (PowerShell)
+.venv\Scripts\activate
 
 # Linux/Mac
-python3 -m venv venv
-source venv/bin/activate
+source .venv/bin/activate
 ```
 
-3. **Instalar dependencias**
+4. **Desinstalar versiones previas de flet (importante)**
+```bash
+pip uninstall flet flet-desktop flet-core flet-runtime -y
+```
+
+5. **Instalar dependencias**
 ```bash
 pip install -r requirements.txt
 ```
 
-4. **Ejecutar la aplicación**
+6. **Ejecutar la aplicación (interfaz gráfica)**
 ```bash
-python main.py
+python ui_taskmaster.py
+```
+
+7. **Ejecutar la aplicación (terminal)**
+```bash
+python run.py
 ```
 
 ## 🧪 Ejecución de Pruebas
 
 ### Ejecutar pruebas unitarias
 ```bash
-python -m unittest discover src/tests
+py -m unittest tests.test_task_manager
 ```

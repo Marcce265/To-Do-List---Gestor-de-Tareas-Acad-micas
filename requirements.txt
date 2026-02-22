@@ -1,3 +1,2 @@
-SQLAlchemy>=2.0.0
-coverage>=5.0.0
-flet>=0.1.0    
+flet==0.21.2
+SQLAlchemy==2.0.46
